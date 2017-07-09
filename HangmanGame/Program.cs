@@ -12,6 +12,9 @@ namespace HangmanGame
         static int chances = 5;
         static string selectedword;  // random word choose by comupter
         static string guessword;
+        static bool wordFound;
+        static char selectedchar;
+        static bool over = true;
         static int asciivalue =0;  // value can be between 0 to 25
         static bool[] usedLetters = new bool[26]; 
         static void Main(string[] args)
@@ -19,12 +22,14 @@ namespace HangmanGame
             Console.WriteLine("\t\tLet's Play Hangman");
             Console.WriteLine("\t\t==================");
             
-            while (true)
+            while (over)
             {
                 Console.Clear();
-                hangman();
+               
+                selectedword = Generateword();
+                Letternotfound();
             }
-            selectedword = Generateword();
+           
            
             Console.ReadKey();
 
@@ -40,7 +45,7 @@ namespace HangmanGame
             return selectedword;
         }
 
-        public static void hangman() // build hangman
+        public static void Hangman() // build hangman
         {
             
             switch (chances)
@@ -92,7 +97,30 @@ namespace HangmanGame
             Console.WriteLine();
         }
         
-
+        public static void Askuser()
+        {
+            Console.WriteLine("Please enter one letter");
+            char selectedchar = Convert.ToChar(Console.ReadLine());
+            asciivalue = selectedchar - 'a';
+            usedLetters[asciivalue] = true;
+        }
+        public static void Checkletter()
+        {
+            for (int position = 0; position < selectedword.Length; position++)
+            {
+                if (selectedchar == selectedword[position])
+                {
+                    wordFound = true;
+                }
+            }
+        }
+       public static void Letternotfound()
+        {
+            if (wordFound == false)
+            {
+                chances--;
+            }
+        }
 
     }
 }
