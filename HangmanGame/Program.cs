@@ -12,26 +12,32 @@ namespace HangmanGame
         static int chances = 5;
         static string selectedword;  // random word choose by comupter
         static string guessword;
-        
+        static int asciivalue =0;  // value can be between 0 to 25
+        static bool[] usedLetters = new bool[26]; 
         static void Main(string[] args)
         {
             Console.WriteLine("\t\tLet's Play Hangman");
             Console.WriteLine("\t\t==================");
-           
+            
+            while (true)
+            {
+                Console.Clear();
+                hangman();
+            }
             selectedword = Generateword();
-            hangman();
+           
             Console.ReadKey();
 
         }
 
         public static string Generateword() // metod to generate random word from the given array
         {
-            string word;          
+                     
             string[] listofwords = { "guitar", "saxophone", "trumpet", "xylophone",
                                       "accordion", "harmonica", "melodica", "sitar" };
             
-            word = listofwords[rnd.Next(0, listofwords.Length)];
-            return word;
+            selectedword = listofwords[rnd.Next(0, listofwords.Length)];
+            return selectedword;
         }
 
         public static void hangman() // build hangman
@@ -68,6 +74,25 @@ namespace HangmanGame
 
             }
         }
+        public static void hiddenword()
+        {
+            for (int i = 0; i < selectedword.Length; i++)
+            {
+                char l = selectedword[i];
+                asciivalue = l - 'a';
+                if (usedLetters[asciivalue] == true)
+                {
+                    Console.Write(l + " ");
+                }
+                else
+                {
+                    Console.Write("_ ");
+                }
+            }
+            Console.WriteLine();
+        }
+        
+
 
     }
 }
