@@ -15,39 +15,57 @@ namespace HangmanGame
         static bool wordFound;
         static char selectedchar;
         static bool over = true;
-        static int asciivalue =0;  // value can be between 0 to 25
-        static bool[] usedLetters = new bool[26]; 
+        static int asciivalue = 0;  // value can be between 0 to 25
+        static bool[] usedLetters = new bool[26];
         static void Main(string[] args)
         {
             Console.WriteLine("\t\tLet's Play Hangman");
             Console.WriteLine("\t\t==================");
-            
+
+            Generateword();
+
+            hiddenword();
+            Askuser();
+
+
             while (over)
             {
                 Console.Clear();
-               
-                selectedword = Generateword();
-                Letternotfound();
+
+
+              //  hiddenword();
+                if(!wordFound)
+                PrintHangman();
+                //CheckLetterIfInWork
+                if (chances > 0)
+                {
+                    Askuser();
+                }
+                else {
+                    over = false;
+                }
+
+
+                //Console.ReadKey();
             }
-           
-           
+
+
             Console.ReadKey();
 
         }
 
-        public static string Generateword() // metod to generate random word from the given array
+        public static void Generateword() // metod to generate random word from the given array
         {
-                     
+
             string[] listofwords = { "guitar", "saxophone", "trumpet", "xylophone",
                                       "accordion", "harmonica", "melodica", "sitar" };
-            
+
             selectedword = listofwords[rnd.Next(0, listofwords.Length)];
-            return selectedword;
         }
 
-        public static void Hangman() // build hangman
+        public static void PrintHangman() // build hangman
         {
-            
+
             switch (chances)
             {
                 case 0:
@@ -76,6 +94,9 @@ namespace HangmanGame
                 case 5:
                     Console.WriteLine("Looking good!");
                     break;
+                default:
+                    break;
+
 
             }
         }
@@ -96,31 +117,41 @@ namespace HangmanGame
             }
             Console.WriteLine();
         }
-        
+
         public static void Askuser()
         {
             Console.WriteLine("Please enter one letter");
             char selectedchar = Convert.ToChar(Console.ReadLine());
             asciivalue = selectedchar - 'a';
             usedLetters[asciivalue] = true;
-        }
-        public static void Checkletter()
-        {
             for (int position = 0; position < selectedword.Length; position++)
             {
                 if (selectedchar == selectedword[position])
                 {
+                    hiddenword();
                     wordFound = true;
+    
                 }
+               
+              
+
             }
-        }
-       public static void Letternotfound()
-        {
             if (wordFound == false)
             {
                 chances--;
-            }
-        }
+              
 
+               
+
+            }
+
+
+
+
+
+
+
+
+        }
     }
 }
