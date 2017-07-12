@@ -8,107 +8,128 @@ namespace HangmanGame
 {
     class Program
     {
-        static Random rnd = new Random();
-        static int chances = 5;
-        static string selectedword;  // random word choose by comupter
-        static string guessword;
-        static bool wordFound;
-        static char selectedchar;
-        static bool over = true;
-        static int asciivalue = 0;  // value can be between 0 to 25
-        static bool[] usedLetters = new bool[26];
+        public static int chances;
+        public static String[] words = { "guitar", "saxophone", "trumpet", "xylophone",
+                                      "accordion", "harmonica", "melodica", "sitar"};
+        static string selectedWord;
+        static bool[] usedLetters;
+        static int asciiValue;
+        static bool repeat = true;
+
+        public static void setVariables()
+        {
+
+            chances = 5;
+            usedLetters = new bool[26]; //if found is true
+            asciiValue = 0; //Can be between 0 to 25
+
+            //Find Random Word
+            Random rnd = new Random();
+            selectedWord = words[rnd.Next(0, words.Length)];
+        }
         static void Main(string[] args)
         {
-            Console.WriteLine("\t\tLet's Play Hangman");
-            Console.WriteLine("\t\t==================");
 
-            Generateword();
-
-            hiddenword();
-            Askuser();
+            setVariables();
 
 
-            while (over)
+            while (repeat)
             {
-                Console.Clear();
+                Console.Write("Lets Play the Hangman");
+                printHangman();
+                checkLetterValidation();
 
-
-              //  hiddenword();
-                if(!wordFound)
-                PrintHangman();
-                //CheckLetterIfInWork
-                if (chances > 0)
-                {
-                    Askuser();
-                }
-                else {
-                    over = false;
-                }
-
-
-                //Console.ReadKey();
+                askLetterfromUser();
             }
-
 
             Console.ReadKey();
+        }
+
+        public static void askLetterfromUser()
+        {
+            //ASK FOR A LETTER
+            Console.Write("Input A Letter: ");
+
+            char selectedCharacter = Convert.ToChar(Console.ReadLine());
+            asciiValue = selectedCharacter - 'a';
+            usedLetters[asciiValue] = true;
+
+            checkLetterValidation(selectedCharacter);
 
         }
 
-        public static void Generateword() // metod to generate random word from the given array
+        public static void checkLetterValidation(char selectedCharacter)
         {
 
-            string[] listofwords = { "guitar", "saxophone", "trumpet", "xylophone",
-                                      "accordion", "harmonica", "melodica", "sitar" };
-
-            selectedword = listofwords[rnd.Next(0, listofwords.Length)];
-        }
-
-        public static void PrintHangman() // build hangman
-        {
-
-            switch (chances)
+            //CHECK IF LETTER IN WORD
+            bool isFound = false;
+            for (int position = 0; position < selectedWord.Length; position++)
             {
-                case 0:
-                    Console.WriteLine(" O ");
-                    Console.WriteLine("-|-");
-                    Console.WriteLine("/ \\ ");
-                    Console.WriteLine("GAME OVER!");
-                    break;
-                case 1:
-                    Console.WriteLine(" O ");
-                    Console.WriteLine("-|-");
-                    Console.WriteLine("/  ");
-                    break;
-                case 2:
-                    Console.WriteLine(" O ");
-                    Console.WriteLine("-|-");
-                    break;
-                case 3:
-                    Console.WriteLine(" O ");
-                    Console.WriteLine("-|");
-                    break;
-                case 4:
-                    Console.WriteLine(" O ");
-                    Console.WriteLine(" |");
-                    break;
-                case 5:
-                    Console.WriteLine("Looking good!");
-                    break;
-                default:
-                    break;
+                if (selectedCharacter == selectedWord[position])
+                {
+                    isFound = true;
+                   /* String[] makeword;
+                    string charsStr = "";
 
+
+                    char[] arr = new char[selectedWord.Length];
+                    for (int j = 0; j < arr.Length; j++)
+                    {
+                        arr[j] = selectedCharacter;
+
+                        charsStr = new string(arr);
+
+
+
+
+                    }
+                    if (charsStr == selectedWord)
+                    {
+                        Console.Write("Yipeeeeeee You Won the Game!: ");
+                        repeat = false;
+
+                    }*/
+
+
+
+
+                }
+            }
+
+            //IF CORRECT OR NOT
+            if (isFound == false)
+            {
+                chances--;
 
             }
         }
-        public static void hiddenword()
+
+        public static void checkLetterValidation()
         {
-            for (int i = 0; i < selectedword.Length; i++)
+            int count = 0;
+            //DRAW MY Hidden Word
+            for (int i = 0; i < selectedWord.Length; i++)
             {
-                char l = selectedword[i];
-                asciivalue = l - 'a';
-                if (usedLetters[asciivalue] == true)
+                char l = selectedWord[i];
+                asciiValue = l - 'a';
+                if (usedLetters[asciiValue] == true)
                 {
                     Console.Write(l + " ");
+                   
+
+                    count++;
+                    if (count == selectedWord.Length)
+                    {
+                        Console.WriteLine(" ");
+                        Console.WriteLine("Yipeeeeeee You Won the Game!: ");
+
+                        Console.WriteLine("See you soon!: ");
+                        System.Threading.Thread.Sleep(4000);
+
+                        Environment.Exit(0);
+                    }
+                       
+
                 }
                 else
                 {
@@ -116,42 +137,131 @@ namespace HangmanGame
                 }
             }
             Console.WriteLine();
+
         }
 
-        public static void Askuser()
+        public static void printHangman()
         {
-            Console.WriteLine("Please enter one letter");
-            char selectedchar = Convert.ToChar(Console.ReadLine());
-            asciivalue = selectedchar - 'a';
-            usedLetters[asciivalue] = true;
-            for (int position = 0; position < selectedword.Length; position++)
+
+            Console.Clear();
+            //Draw HangMan
+            Console.WriteLine("Chances " + chances);
+            Console.WriteLine("--------------------");
+
+
+
+            if (chances == 0)
             {
-                if (selectedchar == selectedword[position])
+                DrawLives0();
+                repeat = false;
+                Console.WriteLine("You Lose!");
+                bool repeat_option = true;
+                while (repeat_option)
                 {
-                    hiddenword();
-                    wordFound = true;
-    
+                    Console.WriteLine("Do you Want to Play a game again?(1/0)");
+                    int repeatGame = Convert.ToInt32(Console.ReadLine());
+                    if (repeatGame == 1)
+                    {
+                        repeat = true;
+                        chances = 5;
+                        repeat_option = false;
+                        String[] n = { };
+                        Main(n);
+
+                    }
+
+                    else if (repeatGame == 0)
+                    {
+                        repeat = false;
+                        repeat_option = false;
+                        Environment.Exit(0);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid Option!");
+                        repeat_option = true;
+                    }
+
                 }
-               
-              
+                Console.Clear();
 
             }
-            if (wordFound == false)
+            else if (chances == 1)
             {
-                chances--;
-              
-
-               
-
+                DrawLives1();
             }
+            else if (chances == 2)
+            {
+                DrawLives2();
+            }
+            else if (chances == 3)
+            {
+                DrawLives3();
+            }
+            else if (chances == 4)
+            {
+                DrawLives4();
+            }
+        }
 
-
-
-
-
-
-
+        public static void DrawLives0()
+        {
+            Console.WriteLine("___________  ");
+            Console.WriteLine("|         |  ");
+            Console.WriteLine("|         0  ");
+            Console.WriteLine("|        /|\\ ");
+            Console.WriteLine("|        / \\ ");
+            Console.WriteLine("|            ");
+            Console.WriteLine("|            ");
 
         }
-    }
+
+        public static void DrawLives1()
+        {
+            Console.WriteLine("___________  ");
+            Console.WriteLine("|         |  ");
+            Console.WriteLine("|         0  ");
+            Console.WriteLine("|        /|\\ ");
+            Console.WriteLine("|          ");
+            Console.WriteLine("|            ");
+            Console.WriteLine("|            ");
+
+        }
+
+        public static void DrawLives2()
+        {
+            Console.WriteLine("___________  ");
+            Console.WriteLine("|         |  ");
+            Console.WriteLine("|         0  ");
+            Console.WriteLine("|         | ");
+            Console.WriteLine("|          ");
+            Console.WriteLine("|            ");
+            Console.WriteLine("|            ");
+
+        }
+        public static void DrawLives3()
+        {
+            Console.WriteLine("___________  ");
+            Console.WriteLine("|         |  ");
+            Console.WriteLine("|         0  ");
+            Console.WriteLine("|         | ");
+            Console.WriteLine("|          ");
+            Console.WriteLine("|            ");
+            Console.WriteLine("|            ");
+
+        }
+        public static void DrawLives4()
+        {
+            Console.WriteLine("___________  ");
+            Console.WriteLine("|         |  ");
+            Console.WriteLine("|         0  ");
+            Console.WriteLine("|          ");
+            Console.WriteLine("|          ");
+            Console.WriteLine("|            ");
+            Console.WriteLine("|            ");
+
+        }
+
+    
+}
 }
